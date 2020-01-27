@@ -96,12 +96,12 @@ div {
 }
 
 html, body {
-  width:  100%;
-  height: 100%;
-  margin: auto;
-  font-family: Arial;
-  background-color: #000000;
-  color:rgb(255, 255, 255);
+    width:  100%;
+    height: 100%;
+    margin: auto;
+    font-family: Arial;
+    background-color: #000000;
+    color:rgb(255, 255, 255);
 }
 
 form {
@@ -110,45 +110,58 @@ form {
 }
 
 .slidecontainer {
-  width: 100%;
+    width: 100%;
 }
 
 .slider {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 25px;
-  background: #d3d3d3;
-  background-image: linear-gradient(90deg, blue, white, red);
-  outline: none;
-  opacity: 0.9;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
+    -webkit-appearance: none;
+    width: 100%;
+    height: 25px;
+    background: #d3d3d3;
+    background-image: linear-gradient(90deg, blue, white, red);
+    outline: none;
+    opacity: 0.9;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
 }
 
 .slider:hover {
-  opacity: 1;
+    opacity: 1;
 }
 
 .slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 10px;
-  height: 25px;
-  background: rgb(0, 0, 0);
-  box-shadow: 0 0 3pt 3pt white;
-  
-  cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 25px;
+    background: rgb(0, 0, 0);
+    box-shadow: 0 0 3pt 3pt white;
+    cursor: pointer;
+    transition: box-shadow 0.5s;
+}
+
+.slider::-webkit-slider-thumb:hover{
+    box-shadow: 0 0 2pt 2pt red;
 }
 
 .slider::-moz-range-thumb {
-  width: 10px;
-  height: 25px;
-  background: #4CAF50;
-  cursor: pointer;
+    width: 10px;
+    height: 25px;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+a {
+    color: white;
+    transition: color 0.5s;
+}
+
+a:hover{
+    color: red;
 }
 
 #myCanvas {
-width: 90%;
+    width: 90%;
 }
 
 </style>
@@ -539,7 +552,9 @@ function switchUnits(){
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
-    
+
+
+
 </script>
 <title>Spectra & Redshift Demonstration</title>
 <body onload="init();">                                                                                 <!--When the body loads, run the function init();-->
@@ -625,6 +640,30 @@ function numberWithCommas(x) {
                     
                     update();
                 }
+                document.getElementById("wav").addEventListener("wheel", function(event){
+                    event.preventDefault();
+                    if (event.deltaY < 0){
+                        this.value = parseInt(this.value) + 1;
+                        update();
+                    }
+                    else if (event.deltaY > 0){
+                        this.value = parseInt(this.value) - 1;
+                        update();
+                    }
+                });
+                document.getElementById("zShift").addEventListener("wheel", function(event){
+                    event.preventDefault();
+                    if (event.deltaY < 0){
+                        this.value = (parseFloat(this.value) + 0.001).toFixed(3);
+                        slideShift.value = this.value*1000;
+                        update();
+                    }
+                    else if (event.deltaY > 0){
+                        this.value = (parseFloat(this.value) - 0.001).toFixed(3);
+                        slideShift.value = this.value*1000;
+                        update();
+                    }
+                });
             </script>
         </div>
         <div></div>
