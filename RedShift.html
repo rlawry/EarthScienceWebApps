@@ -64,38 +64,51 @@ input[type=text], select {
 
 input[type=update] {
     width: 15%;
-    background-color: #4CAF50;
+    background-color: rgb(82, 78, 134);
     color: white;
     padding: 14px 20px;
     margin: 8px 0;
-    border: none;
-    border-radius: 4px;
+    border: rgb(88, 134, 50);
+    border-radius: 30px;
     cursor: pointer;
     text-align: center;
+    transition: background-color 0.4s;
 }
 
 input[type=update]:hover {
-    background-color: #45a049;
+    background-color: rgb(100, 42, 88);
+}
+
+#scaleTitle{
+    -webkit-transform:scale(2.0, 1.0);
+    -moz-transform:scale(2.0, 1.0);
+    -ms-transform:scale(2.0, 1.0);
+    -o-transform:scale(2.0, 1.0);
+    transform:scale(2.0,1.0);
+    background-color : black;
 }
 
 div {
     border-radius: 0px;
-    background-color: #f2f2f2;
+    background-color: #222222;
     padding: 5px;
     width: 100%;
 }
 
 html, body {
-  width:  98%;
+  width:  100%;
   height: 100%;
-  margin: 10;
+  margin: auto;
   font-family: Arial;
+  background-color: #000000;
+  color:rgb(255, 255, 255);
 }
 
 form {
-    width: 98%;
+    width: 95%;
     height: 100%;
-}    
+}
+
 .slidecontainer {
   width: 100%;
 }
@@ -105,8 +118,9 @@ form {
   width: 100%;
   height: 25px;
   background: #d3d3d3;
+  background-image: linear-gradient(90deg, blue, white, red);
   outline: none;
-  opacity: 0.7;
+  opacity: 0.9;
   -webkit-transition: .2s;
   transition: opacity .2s;
 }
@@ -118,19 +132,25 @@ form {
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 25px;
+  width: 10px;
   height: 25px;
-  background: rgb(255, 255, 255);
-  outline: 3px dotted rgb(88, 134, 19);
+  background: rgb(0, 0, 0);
+  box-shadow: 0 0 3pt 3pt white;
+  
   cursor: pointer;
 }
 
 .slider::-moz-range-thumb {
-  width: 25px;
+  width: 10px;
   height: 25px;
   background: #4CAF50;
   cursor: pointer;
 }
+
+#myCanvas {
+width: 90%;
+}
+
 </style>
 
 <script src="lines.js"></script>                        <!--This set of scripts is equivalent to including libraries.-->
@@ -141,7 +161,7 @@ form {
 var style = document.querySelector('[data="test"]');    //In this section there are elements and colors and sizes that need to be accessed frequently and by more than one function.
 var emitWavelength = 640;                               //By placing them here, they are outside of the other functions and their values also become global.
 var padding = 10;                                       //The elements still need to be removed from this code so that they can be updated without editing this code but rather another text document.
-var diagramMax = 100+padding;                           //Until then, the wavelengths of the element's spectra have been written out in arrays.
+var diagramMax = 95+padding;                           //Until then, the wavelengths of the element's spectra have been written out in arrays.
 var red, blue, green, alpha, gradient;
 var unitCycle = 0;
 var unitList = [" km/s"," km/h"," mph"," light years per year"," m/s"," times Earths orbital speed"," times the speed of Parker Solar Probe"];
@@ -226,8 +246,8 @@ function init() {                                                               
     if (canvas.getContext) {                                                                                //Code to use the canvas in javascript.  It is always necessary to include.
         var ctx = canvas.getContext('2d');   
     }
-    ctx.canvas.width  = window.innerWidth-60;                                                               //Set the width of the canvas to be within the size of the window on refresh.
-    document.getElementById("myForm").width = window.innerWidth-60;
+    ctx.canvas.width  = window.innerWidth;                                                               //Set the width of the canvas to be within the size of the window on refresh.
+    document.getElementById("myForm").width = window.innerWidth-100;
     createColorMaps();                                                                                      //Create the arrays of color so that we can use them for drawing.
     ctx.fillStyle = 'black';                                                                                //Draw the black background
     ctx.fillRect(0, padding, canvas.width, diagramMax-padding);             
@@ -247,37 +267,68 @@ function init() {                                                               
     ctx.lineTo(convertWav,diagramMax);
     ctx.stroke();
     ctx.closePath();
-    
+    document.getElementById("zDisplay").innerHTML = redShift.toFixed(3);
 }
 
 function drawScale(){
     var counter = 0;
+    var counterMinor = 9;
+    var long = 8;
+    var short = 3;
+    var five = 6;
     var scale = 380;                                                                                        //The minimum value of the scale
-    var font = 16;                                                                                          //font size
+    var font = 16;
+    var textShift = 38;                                                                                          //font size
     var canvas = document.getElementById('myCanvas');
     if (canvas.getContext) {
         var ctx = canvas.getContext('2d');   
     }
     ctx.font = font + 'px Arial';
     var inc = (canvas.width-2*padding)/37; 
-    while (counter<=(canvas.width-padding)){                                                                //Draw tick marks
-        ctx.strokeStyle = 'rgb(0,0,0)';                                                                     //they will be black at 2 pixels wide
+    if(canvas.width>1000){
+        for (var i = 1; i<counter+padding-7;i++){
+            ctx.strokeStyle = 'rgb(200,200,200)';                                                                     //they will be black at 2 pixels wide
+            ctx.lineWidth = 2;                                                                                  
+            ctx.beginPath();
+            ctx.moveTo(i*(inc/10)-2,diagramMax);
+            ctx.lineTo(i*(inc/10)-2,diagramMax+short);
+            ctx.stroke();
+            ctx.closePath();
+        }
+    }
+    for (var counter = 0; counter<=(canvas.width-padding);counter+=inc){                                                                //Draw tick marks
+        ctx.strokeStyle = 'rgb(200,200,200)';                                                                     //they will be black at 2 pixels wide
         ctx.lineWidth = 2;                                                                                  
         ctx.beginPath();
         ctx.moveTo(counter+padding,diagramMax);
-        ctx.lineTo(counter+padding,diagramMax+5);
+        ctx.lineTo(counter+padding,diagramMax+long);
         ctx.stroke();
         ctx.closePath();
         
         ctx.save();                                                                                         //Rotate the canvas and place the rotated numbers on the scale.
-        ctx.translate(font-font/2+1, diagramMax+35);
-        ctx.rotate(-Math.PI/2);                                                                             //Rotate -90 degrees.
+        ctx.translate(font-font/2+2, diagramMax+textShift);
+        ctx.rotate(-Math.PI/2);
+        ctx.fillStyle = "white";                                                                             //Rotate -90 degrees.
         ctx.fillText(scale, 0, 0+counter+padding/2);
         ctx.restore();
-        counter+=inc;
-        scale+=10;                                                                                          //Increase by 10 nanometers each time we draw a number.
-    }
-}
+        
+        for(var minor = 1; minor<=counterMinor; minor++){
+            ctx.strokeStyle = 'rgb(200,200,200)';                                                                     //they will be black at 2 pixels wide
+            ctx.lineWidth = 2;                                                                                  
+            ctx.beginPath();
+            ctx.moveTo(counter+padding+minor*(inc/10),diagramMax);
+            if(minor == 5){ctx.lineTo(counter+padding+minor*(inc/10),diagramMax+five);}
+            else if (canvas.width>1000){
+                ctx.lineTo(counter+padding+minor*(inc/10),diagramMax+short);
+            }
+            ctx.stroke();
+            ctx.closePath();
+        }
+        scale+=10;
+    } 
+    
+}                                                                                                 //Increase by 10 nanometers each time we draw a number.
+
 
 function setColor(wav){                                                                                     //We input a variable that points to a specific index in our color maps.
     wav = Math.round(wav);                                                                                  //This variable is an actual pixel.
@@ -422,16 +473,22 @@ function plotElement(){
 
 function update(){                                                                                                                                  //This function is necessary to separate out the behavior of the inputs in the html
     redShift = parseFloat(document.getElementById('zShift').value);                                                                                 //Slider colors and redshift values are set here. 
-    var color = 255-Math.round(255 * Math.abs((parseFloat(redShift)/(11))));
-    if(redShift<0){style.innerHTML=".slider::-webkit-slider-thumb { background: rgb("+ color +","+ color +",255) !important;}";}
-    else if(redShift>0){style.innerHTML=".slider::-webkit-slider-thumb { background: rgb(255,"+ color +","+ color +") !important;}";}
-    else{style.innerHTML=".slider::-webkit-slider-thumb { background: rgb(255,255,255) !important;}";}
+    var color = Math.round(255 * Math.abs((parseFloat(redShift)/(11))));
+    
+    if(redShift<0){style.innerHTML=".slider::-webkit-slider-thumb { background: rgb(0,0,"+color+") !important;}";}
+    else if(redShift>0){style.innerHTML=".slider::-webkit-slider-thumb { background: rgb("+color+",0,0) !important;}";}
+    else{style.innerHTML=".slider::-webkit-slider-thumb { background: rgb(0,0,0) !important;}";}
+    
     if(plotType == 0){plotSample();}
     else if(plotType == 1){plotElement();}
-    document.getElementById("velocity").innerHTML = numberWithCommas((unitConversion[unitCycle]*redShift).toFixed(fixValue)) + unitList[unitCycle];
+    
+    if(redShift != 0){document.getElementById("velocity").innerHTML = numberWithCommas((unitConversion[unitCycle]*redShift).toFixed(fixValue)) + unitList[unitCycle];}
+    else{document.getElementById("velocity").innerHTML = "Stationary";}
     selectedObject = $(":selected", "#knownObjects").val();
     $("#objectReference").attr("href", redshiftObjects[selectedObject]["reference"]);
     $("#objectReference").text(selectedObject);
+
+    document.getElementById("zDisplay").innerHTML = redShift.toFixed(3);
 }
 
 function switchState(){                                     //I like using these functions.
@@ -486,14 +543,15 @@ function numberWithCommas(x) {
 </script>
 <title>Spectra & Redshift Demonstration</title>
 <body onload="init();">                                                                                 <!--When the body loads, run the function init();-->
-    <h2 style="text-align: center;">Elemental Spectra and Redshift Demonstration</h2>       
+    <h2 style="text-align: center;">Elemental Spectra and Redshift Demonstration</h2>
+    <h4 style="text-align: center;">[λf = c]</h4>       
     <center><canvas id="myCanvas" width="1500" height="150" style="border:1px solid #000000;">
         Your browser does not support the HTML5 canvas tag.
-        </canvas></center>
-    <form id="myForm">                                                                                               <!-- This container called "form" contains all of the remaining elements on the page.  The width doesn't match the canvas, which bugs me.  Maybe you can figure out how to make them match up. --> 
-        <div style="text-align: center;">Velocity of Light Source Relative to You:&nbsp;&nbsp;<span id="velocity" data-tip="Click to change units.">Stationary</span><span id="units"></span></div>
-        <div>Sample Wavelength (nanometers)&nbsp</div>
-        <div><input type=text value="520" id="wav">
+        </canvas>
+    <form id="myForm">
+        <left>                                                                                               <!-- This container called "form" contains all of the remaining elements on the page.  The width doesn't match the canvas, which bugs me.  Maybe you can figure out how to make them match up. --> 
+        <div style="text-align: center;" id="scaleTitle">Wavelength (nanometers)</div>
+        <div><input type=update value="Plot Element" onclick="plotElement()">
             <select id="elementSelect" oninput="plotElement()">...Select...</select>
             <input type="checkbox" name="showSpectra" value="isChecked" onclick="switchState()"> Show absorption spectra&nbsp;&nbsp;<input type="checkbox" name="showExtinction" value="isChecked" onclick="switchGradient()" checked> Show extinction
             &nbsp;|&nbsp;
@@ -505,9 +563,10 @@ function numberWithCommas(x) {
             </select>
             Line Width
         </div>
-        <div><input type=update value="Plot Wavelength" onclick="plotSample()">&nbsp<input type=update value="Plot Element" onclick="plotElement()"></div>
+        <div><input type=update value="Plot Wavelength" onclick="plotSample()">&nbsp<input type=text value="520" id="wav"></div>
+        </left>
         <div class="slidecontainer">
-            <p style="text-align: center;">Red Shift</p>
+            <p style="text-align: center;">Red Shift (z = <span id="zDisplay")></span>) :: <span>Velocity of Light Source Relative to You:&nbsp;&nbsp;<span id="velocity" data-tip="Click to change units.">Stationary</span><span id="units"></span></span></p>
             
             <input type="range" min="-11000" max="11000" value="0" class="slider" id="shiftSlider"><span data-tip="Type your own redshift here."><input type=text value="0.000" id="zShift"></span>
             <span>&nbsp;&nbsp;<input type="button" name="zero" value="Zero out Redshift" onclick="zeroOut()" style="position: relative;">&nbsp;&nbsp;|</span>
@@ -553,7 +612,7 @@ function numberWithCommas(x) {
                     }
                     ctx.fillStyle = 'white';   
                     ctx.fillRect(0, padding, canvas.width, diagramMax-padding);
-                    style.innerHTML=".slider::-webkit-slider-thumb { background: rgb(255,255,255) !important;}";
+                    style.innerHTML=".slider::-webkit-slider-thumb { background: rgb(0,0,0) !important;}";
                     document.getElementById("knownObjects").selectedIndex = 0;
                     update();
                 }
@@ -572,7 +631,9 @@ function numberWithCommas(x) {
         <div></div>
         <div style="font-size: 12px;">Spectral Lines Source: <a href="https://www.nist.gov/" id="credits">https://www.nist.gov/</a></div>
         <div style="font-size: 12px;">Redshift Object Info: <a href="https://stellarium-web.org/" id="objectReference">Stellarium</a></div>
+        <div style="font-size: 12px;">Velocities are determined using Flat-Time Relativistic Doppler w/o Lorentz</div>
     </form>
+    </center>
         
 </body>
 </html>
